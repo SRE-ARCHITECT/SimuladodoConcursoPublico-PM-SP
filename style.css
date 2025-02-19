@@ -1,0 +1,119 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f8ff; /* Light Blue Background */
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    background-color: #fff; /* White Container */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 800px;
+}
+
+h1 {
+    color: #4682B4; /* Steel Blue */
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2.2em; /* Aumentei o tamanho da fonte */
+}
+
+#timer {
+    font-size: 1.4em; /* Aumentei o tamanho da fonte */
+    color: #696969; /* Dim Gray */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#question-container {
+    margin-bottom: 20px;
+}
+
+#question-container h2 {
+    color: #5F9EA0; /* Cadet Blue */
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 12px; /* Aumentei o espaçamento */
+    font-size: 1.1em; /* Aumentei o tamanho da fonte */
+}
+
+button {
+    padding: 12px 20px;
+    background-color: #4682B4; /* Steel Blue */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1.1em; /* Aumentei o tamanho da fonte */
+}
+
+button:hover {
+    background-color: #2E5984; /* Darker Steel Blue */
+}
+
+#result-container {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f0f8ff; /* Light Blue */
+    border-radius: 5px;
+}
+
+#result-container h2 {
+    color: #4682B4; /* Steel Blue */
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.8em; /* Aumentei o tamanho da fonte */
+}
+
+#result-container p {
+    margin-bottom: 10px;
+    font-size: 1.1em; /* Aumentei o tamanho da fonte */
+}
+
+.qrcode-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.qrcode {
+    width: 160px; /* Aumentei o tamanho do QR Code */
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.qrcode-container p {
+    font-size: 1em; /* Aumentei o tamanho da fonte */
+    color: #696969; /* Dim Gray */
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .container {
+        width: 95%;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    button {
+        padding: 10px 15px;
+    }
+
+    .qrcode {
+        width: 140px;
+    }
+}
