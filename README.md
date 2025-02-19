@@ -66,4 +66,4 @@ Conclusão:
 O simulado foi criado com o objetivo de fornecer uma ferramenta de estudo 
 completa e eiciente para os candidatos à Polícia Militar do Estado de São Paulo. 
 As funcionalidades implementadas simulam as condições reais da prova, 
-ajudando os candidatos a se prepararem de forma mais eicaz. 
+ajudando os candidatos a se prepararem de forma mais eficaz. 
