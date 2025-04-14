@@ -98,6 +98,36 @@ button:hover {
     color: #696969; /* Dim Gray */
 }
 
+/* Estilo para o contêiner de anúncios */
+.ad-space {
+    margin-top: 30px;
+    width: 100%;
+    min-height: 90px;
+    text-align: center;
+    overflow: hidden;
+}
+
+/* Estilo para o contato do desenvolvedor */
+.developer-contact {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+    font-size: 0.9em;
+    color: #777;
+}
+
+.developer-contact a {
+    color: #4682B4;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.developer-contact a:hover {
+    color: #2E5984;
+    text-decoration: underline;
+}
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
     .container {
