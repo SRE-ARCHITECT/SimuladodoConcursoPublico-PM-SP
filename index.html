@@ -3,27 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Simulado para o Concurso da Polícia Militar de São Paulo (PM-SP) com questões de múltipla escolha e cronômetro.">
+    <meta name="keywords" content="simulado, PM-SP, concurso, polícia militar, São Paulo, questões, teste">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="PMSP.jpg" type="image/jpeg">
     <title>Simulado PM-SP</title>
     <script type='text/javascript' src='//nauseousrocketjosephine.com/1b/94/6e/1b946e699bea24c7cc2abcd8b952c443.js'></script>
 </head>
 <body>
     <div class="container">
         <h1>Simulado Polícia Militar - SP</h1>
-        <div id="timer">Tempo: <span id="time">05:00</span></div>
+        <div id="progress-container">
+            <div id="progress-bar">
+                <div id="progress-fill"></div>
+            </div>
+            <div id="progress-text">Questão 1 de 95</div>
+        </div>
+        <div id="timer">Tempo: <span id="time">04:00:00</span></div>
+        <div id="category-filter">
+            <label for="category-select">Filtrar por categoria:</label>
+            <select id="category-select">
+                <option value="all">Todas as categorias</option>
+                <option value="Língua Portuguesa">Língua Portuguesa</option>
+                <option value="Matemática">Matemática</option>
+                <option value="Conhecimentos Gerais">Conhecimentos Gerais</option>
+                <option value="Atualidades">Atualidades</option>
+                <option value="Noções de Informática">Noções de Informática</option>
+                <option value="Noções de Direito">Noções de Direito</option>
+            </select>
+        </div>
         <div id="question-container"></div>
-        <button id="next-button">Próxima Pergunta</button>
-        <button id="restart-button" style="display: none;">Reiniciar Simulado</button>
+        <div id="navigation-buttons">
+            <button id="prev-button" disabled>Pergunta Anterior</button>
+            <button id="next-button">Próxima Pergunta</button>
+            <button id="finish-button" style="display: none;">Finalizar Simulado</button>
+            <button id="restart-button" style="display: none;">Reiniciar Simulado</button>
+        </div>
         <div id="result-container" style="display: none;"></div>
         <div class="qrcode-container">
             <img src="image.jpg" alt="QR Code do Pix" class="qrcode">
-            <p>Colabore com o projeto!</p>
+            <p>Colabore com o projeto! Sua contribuição ajuda a manter e melhorar este simulado.</p>
         </div>
         <!-- Container para anúncios -->
         <div id="ad-container" class="ad-space"></div>
         
         <div class="developer-contact">
             Desenvolvido por <a href="https://sites.google.com/view/webappdesigner/" target="_blank">Web App Designer</a>
+            <p>Versão 1.1 - Atualizado em <span id="last-update"></span></p>
         </div>
     </div>
     <script src="script.js"></script>

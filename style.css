@@ -26,6 +26,50 @@ h1 {
     font-size: 2.2em; /* Aumentei o tamanho da fonte */
 }
 
+/* Barra de progresso */
+#progress-container {
+    margin-bottom: 15px;
+}
+
+#progress-bar {
+    width: 100%;
+    height: 10px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+#progress-fill {
+    height: 100%;
+    background-color: #4682B4;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+#progress-text {
+    text-align: center;
+    font-size: 0.9em;
+    color: #696969;
+}
+
+/* Filtro de categorias */
+#category-filter {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#category-select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    font-size: 1em;
+    color: #333;
+    width: 100%;
+    max-width: 300px;
+}
+
 #timer {
     font-size: 1.4em; /* Aumentei o tamanho da fonte */
     color: #696969; /* Dim Gray */
@@ -35,6 +79,10 @@ h1 {
 
 #question-container {
     margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border-left: 4px solid #4682B4;
 }
 
 #question-container h2 {
@@ -42,10 +90,42 @@ h1 {
     margin-bottom: 10px;
 }
 
+#question-container p {
+    font-size: 1.1em;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
 label {
     display: block;
     margin-bottom: 12px; /* Aumentei o espaçamento */
     font-size: 1.1em; /* Aumentei o tamanho da fonte */
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+label:hover {
+    background-color: #f0f0f0;
+}
+
+input[type="radio"] {
+    margin-right: 10px;
+}
+
+/* Estilo para opção selecionada */
+input[type="radio"]:checked + span {
+    font-weight: bold;
+    color: #4682B4;
+}
+
+#navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 button {
@@ -57,10 +137,33 @@ button {
     cursor: pointer;
     transition: background-color 0.3s ease;
     font-size: 1.1em; /* Aumentei o tamanho da fonte */
+    flex: 1;
+    min-width: 150px;
 }
 
 button:hover {
     background-color: #2E5984; /* Darker Steel Blue */
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+#finish-button {
+    background-color: #5cb85c; /* Verde */
+}
+
+#finish-button:hover {
+    background-color: #4cae4c;
+}
+
+#restart-button {
+    background-color: #f0ad4e; /* Amarelo */
+}
+
+#restart-button:hover {
+    background-color: #eea236;
 }
 
 #result-container {
@@ -82,15 +185,33 @@ button:hover {
     font-size: 1.1em; /* Aumentei o tamanho da fonte */
 }
 
+#result-container .score {
+    font-size: 1.5em;
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #e8f4f8;
+    border-radius: 8px;
+}
+
+#result-container .score span {
+    font-weight: bold;
+    color: #4682B4;
+}
+
 .qrcode-container {
     text-align: center;
     margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
 }
 
 .qrcode {
     width: 160px; /* Aumentei o tamanho do QR Code */
     border-radius: 5px;
     margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .qrcode-container p {
@@ -105,6 +226,9 @@ button:hover {
     min-height: 90px;
     text-align: center;
     overflow: hidden;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    padding: 10px 0;
 }
 
 /* Estilo para o contato do desenvolvedor */
@@ -129,21 +253,51 @@ button:hover {
 }
 
 /* Responsive adjustments */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     .container {
         width: 95%;
         padding: 20px;
     }
 
     h1 {
-        font-size: 2em;
+        font-size: 1.8em;
+    }
+    
+    #timer {
+        font-size: 1.2em;
     }
 
     button {
         padding: 10px 15px;
+        font-size: 1em;
+        min-width: 120px;
     }
 
     .qrcode {
         width: 140px;
+    }
+    
+    #navigation-buttons {
+        flex-direction: column;
+    }
+}
+
+@media print {
+    body {
+        background-color: white;
+        color: black;
+    }
+    
+    .container {
+        box-shadow: none;
+        width: 100%;
+    }
+    
+    button, .qrcode-container, .ad-space {
+        display: none !important;
+    }
+    
+    #result-container {
+        display: block !important;
     }
 }

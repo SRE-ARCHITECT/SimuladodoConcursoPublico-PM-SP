@@ -132,13 +132,61 @@ const questions = [
     { category: "Noções de Direito", question: "O que é o indulto?", options: ["Perdão da pena", "Aumento da pena", "Redução da pena", "Substituição da pena"], answer: 0 }
 ];
 
+// Variáveis globais
 let currentQuestionIndex = 0;
-let timerInterval;
-let timeLeft = 14400; // 4 horas em segundos (4 * 60 * 60)
 let correctAnswers = 0;
 let incorrectAnswers = [];
+let answeredQuestions = [];
+let timerInterval;
+let timeLeft = 14400; // 4 horas em segundos
+let userAnswers = [];
+let filteredQuestions = [...questions];
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+    // Configurar data da última atualização
+    const lastUpdateDate = new Date(document.lastModified);
+    document.getElementById('last-update').textContent = lastUpdateDate.toLocaleDateString('pt-BR');
+    
+    // Inicializar o simulado
+    initializeSimulator();
+    
+    // Event listeners
+    document.getElementById('next-button').addEventListener('click', nextQuestion);
+    document.getElementById('prev-button').addEventListener('click', prevQuestion);
+    document.getElementById('restart-button').addEventListener('click', restartSimulator);
+    document.getElementById('finish-button').addEventListener('click', confirmFinish);
+    document.getElementById('category-select').addEventListener('change', filterByCategory);
+});
+
+function initializeSimulator() {
+    // Inicializar arrays
+    currentQuestionIndex = 0;
+    correctAnswers = 0;
+    incorrectAnswers = [];
+    answeredQuestions = Array(questions.length).fill(null);
+    userAnswers = Array(questions.length).fill(null);
+    
+    // Resetar UI
+    document.getElementById('question-container').style.display = 'block';
+    document.getElementById('next-button').style.display = 'block';
+    document.getElementById('prev-button').style.display = 'block';
+    document.getElementById('prev-button').disabled = true;
+    document.getElementById('finish-button').style.display = 'none';
+    document.getElementById('restart-button').style.display = 'none';
+    document.getElementById('result-container').style.display = 'none';
+    
+    // Iniciar cronômetro
+    timeLeft = 14400; // 4 horas
+    startTimer();
+    
+    // Carregar primeira pergunta
+    loadQuestion();
+    updateProgressBar();
+}
 
 function startTimer() {
+    clearInterval(timerInterval);
     timerInterval = setInterval(() => {
         let hours = Math.floor(timeLeft / 3600);
         let minutes = Math.floor((timeLeft % 3600) / 60);
@@ -161,88 +209,280 @@ function startTimer() {
 
 function loadQuestion() {
     const questionContainer = document.getElementById('question-container');
-    const currentQuestion = questions[currentQuestionIndex];
+    const currentQuestion = filteredQuestions[currentQuestionIndex];
+    
+    // Encontrar o índice real da questão no array original
+    const originalIndex = questions.findIndex(q => 
+        q.question === currentQuestion.question && 
+        q.category === currentQuestion.category
+    );
 
     questionContainer.innerHTML = `
-        <h2>${currentQuestion.category} - Pergunta ${currentQuestionIndex + 1}</h2>
+        <h2>${currentQuestion.category} - Pergunta ${currentQuestionIndex + 1} de ${filteredQuestions.length}</h2>
         <p>${currentQuestion.question}</p>
         ${currentQuestion.options.map((option, index) => `
-            <label><input type="radio" name="option" value="${index}"> ${option}</label><br>
+            <label>
+                <input type="radio" name="option" value="${index}" ${userAnswers[originalIndex] === index ? 'checked' : ''}>
+                <span>${option}</span>
+            </label>
         `).join('')}
     `;
+    
+    // Atualizar botões de navegação
+    document.getElementById('prev-button').disabled = currentQuestionIndex === 0;
+    
+    if (currentQuestionIndex === filteredQuestions.length - 1) {
+        document.getElementById('next-button').style.display = 'none';
+        document.getElementById('finish-button').style.display = 'block';
+    } else {
+        document.getElementById('next-button').style.display = 'block';
+        document.getElementById('finish-button').style.display = 'none';
+    }
+    
+    updateProgressBar();
 }
 
-function showResults() {
-    clearInterval(timerInterval);
-    const resultContainer = document.getElementById('result-container');
-    let incorrectList = incorrectAnswers.map(index => {
-        let question = questions[index];
-        return `<p><strong>${question.category} - Pergunta ${index + 1}:</strong> ${question.question}<br>
-                Resposta correta: ${question.options[question.answer]}</p>`;
-    }).join('');
-
-    resultContainer.innerHTML = `
-        <h2>Resultados</h2>
-        <p>Você acertou ${correctAnswers} de ${questions.length} perguntas.</p>
-        ${incorrectAnswers.length > 0 ? `
-            <h3>Perguntas erradas:</h3>
-            ${incorrectList}
-        ` : `<p>Parabéns! Você acertou todas as perguntas.</p>`}
-    `;
-
-    document.getElementById('question-container').style.display = 'none';
-    document.getElementById('next-button').style.display = 'none';
-    document.getElementById('restart-button').style.display = 'block';
-    resultContainer.style.display = 'block';
+function updateProgressBar() {
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    
+    const progress = ((currentQuestionIndex + 1) / filteredQuestions.length) * 100;
+    progressFill.style.width = `${progress}%`;
+    progressText.textContent = `Questão ${currentQuestionIndex + 1} de ${filteredQuestions.length}`;
 }
 
 function checkAnswer() {
     const selectedOption = document.querySelector('input[name="option"]:checked');
     if (!selectedOption) {
-        alert("Por favor, selecione uma resposta.");
         return false;
     }
 
     const answerIndex = parseInt(selectedOption.value);
-    if (answerIndex === questions[currentQuestionIndex].answer) {
-        correctAnswers++;
-    } else {
-        incorrectAnswers.push(currentQuestionIndex);
-    }
+    const currentQuestion = filteredQuestions[currentQuestionIndex];
+    
+    // Encontrar o índice real da questão no array original
+    const originalIndex = questions.findIndex(q => 
+        q.question === currentQuestion.question && 
+        q.category === currentQuestion.category
+    );
+    
+    // Salvar a resposta do usuário
+    userAnswers[originalIndex] = answerIndex;
+    
     return true;
 }
 
-document.getElementById('next-button').addEventListener('click', () => {
+function nextQuestion() {
     if (checkAnswer()) {
         currentQuestionIndex++;
-        if (currentQuestionIndex < questions.length) {
+        if (currentQuestionIndex < filteredQuestions.length) {
             loadQuestion();
-        } else {
+        }
+    } else {
+        alert("Por favor, selecione uma resposta.");
+    }
+}
+
+function prevQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+    }
+}
+
+function confirmFinish() {
+    if (!checkAnswer()) {
+        alert("Por favor, selecione uma resposta para a pergunta atual.");
+        return;
+    }
+    
+    const unansweredCount = userAnswers.filter(answer => answer === null).length;
+    
+    if (unansweredCount > 0) {
+        if (confirm(`Você deixou ${unansweredCount} perguntas sem resposta. Deseja realmente finalizar o simulado?`)) {
+            calculateResults();
             showResults();
         }
-        // Desmarcar a opção selecionada
-        let selected = document.querySelector('input[name="option"]:checked');
-        if (selected) {
-            selected.checked = false;
-        }
+    } else {
+        calculateResults();
+        showResults();
     }
-});
+}
 
-document.getElementById('restart-button').addEventListener('click', () => {
-    currentQuestionIndex = 0;
-    timeLeft = 14400;
+function calculateResults() {
     correctAnswers = 0;
     incorrectAnswers = [];
+    
+    questions.forEach((question, index) => {
+        if (userAnswers[index] === question.answer) {
+            correctAnswers++;
+        } else if (userAnswers[index] !== null) {
+            incorrectAnswers.push(index);
+        }
+    });
+}
 
-    document.getElementById('question-container').style.display = 'block';
-    document.getElementById('next-button').style.display = 'block';
-    document.getElementById('restart-button').style.display = 'none';
-    document.getElementById('result-container').style.display = 'none';
+function showResults() {
+    clearInterval(timerInterval);
+    const resultContainer = document.getElementById('result-container');
+    
+    // Calcular porcentagem de acertos
+    const totalAnswered = userAnswers.filter(answer => answer !== null).length;
+    const percentage = totalAnswered > 0 ? Math.round((correctAnswers / totalAnswered) * 100) : 0;
+    
+    // Gerar lista de perguntas incorretas
+    let incorrectList = incorrectAnswers.map(index => {
+        let question = questions[index];
+        return `<div class="incorrect-question">
+            <p><strong>${question.category} - Pergunta ${index + 1}:</strong> ${question.question}</p>
+            <p class="user-answer">Sua resposta: ${question.options[userAnswers[index]]}</p>
+            <p class="correct-answer">Resposta correta: ${question.options[question.answer]}</p>
+        </div>`;
+    }).join('');
 
+    resultContainer.innerHTML = `
+        <h2>Resultados do Simulado</h2>
+        <div class="score">
+            <p>Você acertou <span>${correctAnswers}</span> de <span>${totalAnswered}</span> perguntas respondidas.</p>
+            <p>Porcentagem de acertos: <span>${percentage}%</span></p>
+        </div>
+        
+        <div class="category-breakdown">
+            <h3>Desempenho por categoria:</h3>
+            ${getCategoryBreakdown()}
+        </div>
+        
+        ${incorrectAnswers.length > 0 ? `
+            <h3>Perguntas erradas:</h3>
+            <div class="incorrect-questions-list">
+                ${incorrectList}
+            </div>
+        ` : `<p class="perfect-score">Parabéns! Você acertou todas as perguntas que respondeu.</p>`}
+        
+        <p class="time-taken">Tempo utilizado: ${getTimeTaken()}</p>
+    `;
+
+    document.getElementById('question-container').style.display = 'none';
+    document.getElementById('next-button').style.display = 'none';
+    document.getElementById('prev-button').style.display = 'none';
+    document.getElementById('finish-button').style.display = 'none';
+    document.getElementById('restart-button').style.display = 'block';
+    resultContainer.style.display = 'block';
+    
+    // Rolar para o topo da página
+    window.scrollTo(0, 0);
+}
+
+function getCategoryBreakdown() {
+    // Agrupar perguntas por categoria
+    const categories = {};
+    
+    questions.forEach((question, index) => {
+        if (!categories[question.category]) {
+            categories[question.category] = {
+                total: 0,
+                correct: 0,
+                answered: 0
+            };
+        }
+        
+        categories[question.category].total++;
+        
+        if (userAnswers[index] !== null) {
+            categories[question.category].answered++;
+            
+            if (userAnswers[index] === question.answer) {
+                categories[question.category].correct++;
+            }
+        }
+    });
+    
+    // Gerar HTML para o breakdown
+    let breakdownHTML = '<div class="category-stats">';
+    
+    for (const category in categories) {
+        const stats = categories[category];
+        const percentage = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0;
+        
+        breakdownHTML += `
+            <div class="category-stat">
+                <h4>${category}</h4>
+                <p>Acertos: ${stats.correct}/${stats.answered} (${percentage}%)</p>
+            </div>
+        `;
+    }
+    
+    breakdownHTML += '</div>';
+    return breakdownHTML;
+}
+
+function getTimeTaken() {
+    const totalSeconds = 14400 - timeLeft;
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function restartSimulator() {
+    if (confirm("Tem certeza que deseja reiniciar o simulado? Todo o seu progresso será perdido.")) {
+        initializeSimulator();
+    }
+}
+
+function filterByCategory() {
+    const selectedCategory = document.getElementById('category-select').value;
+    
+    if (selectedCategory === 'all') {
+        filteredQuestions = [...questions];
+    } else {
+        filteredQuestions = questions.filter(q => q.category === selectedCategory);
+    }
+    
+    // Reiniciar o índice da questão atual
+    currentQuestionIndex = 0;
     loadQuestion();
-    startTimer();
-});
+    updateProgressBar();
+}
 
+// Função para salvar o progresso no localStorage
+function saveProgress() {
+    const progress = {
+        userAnswers,
+        timeLeft,
+        currentQuestionIndex,
+        lastSaved: new Date().toISOString()
+    };
+    
+    localStorage.setItem('pmsp-simulator-progress', JSON.stringify(progress));
+}
+
+// Função para carregar o progresso do localStorage
+function loadProgress() {
+    const savedProgress = localStorage.getItem('pmsp-simulator-progress');
+    
+    if (savedProgress) {
+        const progress = JSON.parse(savedProgress);
+        
+        // Verificar se o progresso não está muito antigo (mais de 1 dia)
+        const lastSaved = new Date(progress.lastSaved);
+        const now = new Date();
+        const daysDiff = (now - lastSaved) / (1000 * 60 * 60 * 24);
+        
+        if (daysDiff <= 1) {
+            userAnswers = progress.userAnswers;
+            timeLeft = progress.timeLeft;
+            currentQuestionIndex = progress.currentQuestionIndex;
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+// Salvar progresso a cada minuto
+setInterval(saveProgress, 60000);
 window.onload = () => {
     loadQuestion();
     startTimer();
